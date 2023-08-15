@@ -59,6 +59,10 @@ export default class EditOrganizationForm extends NextTwinspect {
     this.isLoading = true
   }
 
+  get isLgAndUp() {
+    return this.$vuetify.breakpoint.lgAndUp
+  }
+
   get directUploadsPath(): string {
     return Api.directUploadsPath
   }

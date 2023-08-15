@@ -40,9 +40,11 @@ import { snack } from '@/composables/useNextTwinspect'
 import { defineEmits, reactive, computed, ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router/composables'
 import useNextTwinspect from '@/composables/useNextTwinspect'
+import useVuetify from '@/composables/useVuetify'
 
 const router = useRouter()
 const nt = useNextTwinspect()
+const vuetify = useVuetify()
 
 const uploaderRef = ref<Uploader>()
 
@@ -64,6 +66,10 @@ const input = (open: boolean) => {
 
 onMounted(() => {
   state.isLoading = true
+})
+
+const isLgAndUp = computed(() => {
+  return vuetify.breakpoint.lgAndUp
 })
 
 const directUploadsPath = () => {
