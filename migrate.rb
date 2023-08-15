@@ -1,7 +1,10 @@
 #!/usr/bin/env ruby
-require 'dotenv/load'
+require 'dotenv'
+Dotenv.load("#{__dir__}/.env")
 
 OPENAI_KEY=ENV['OPENAI_KEY']
+
+REPLACE = ENV['REPLACE'] == 'true'
 
 if OPENAI_KEY.nil? || OPENAI_KEY.empty?
   $stdout.puts "Error no OPENAI_KEY env variable defined"
@@ -44,4 +47,12 @@ rescue => e
   $stderr.puts "Error: #{e.message}\n#{result.inspect}\n\n#{e.backtrace.join("\n")}"
 end
 
-puts prompt(File.read(ARGV[0]))
+path = ARGV[0]
+result = prompt(File.read(path))
+
+if REPLACE
+  File.write(path, result)
+else
+  puts result
+end
+
