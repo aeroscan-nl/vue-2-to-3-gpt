@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 require 'dotenv/load'
 
 OPENAI_KEY=ENV['OPENAI_KEY']
@@ -20,12 +21,12 @@ SYSTEM = <<~SYSTEM_PROMPT
   Example input:
 
   ```
-  #{File.read("example-vue-2.vue")}
+  #{File.read("#{__dir__}/example-vue-2.vue")}
   ```
 
   Example output:
   ```
-  #{File.read("example-vue-3.vue")}
+  #{File.read("#{__dir__}/example-vue-3.vue")}
   ```
 SYSTEM_PROMPT
 
