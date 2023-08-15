@@ -65,6 +65,7 @@ const input = (open: boolean) => {
 }
 
 onMounted(() => {
+  // Set loading to true after created (this comment is preserved)
   state.isLoading = true
 })
 
