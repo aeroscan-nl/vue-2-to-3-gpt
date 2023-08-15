@@ -37,9 +37,11 @@ import Api from '@/api'
 import Organization from '@/models/Organization'
 import InspectionStandard from '@/models/InspectionStandard'
 import { snack } from '@/composables/useNextTwinspect'
-import { defineEmits, reactive, computed, ref } from 'vue'
+import { defineEmits, reactive, computed, ref, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router/composables'
 import useNextTwinspect from '@/composables/useNextTwinspect'
 
+const router = useRouter()
 const nt = useNextTwinspect()
 
 const uploaderRef = ref<Uploader>()
@@ -60,6 +62,10 @@ const input = (open: boolean) => {
   emit('input', open)
 }
 
+onMounted(() => {
+  state.isLoading = true
+})
+
 const directUploadsPath = () => {
   return Api.directUploadsPath
 }
@@ -67,6 +73,10 @@ const directUploadsPath = () => {
 const organization = computed(() => Organization.find(props.organizationId))
 
 const organizations = computed(() => nt.currentUser.value?.uniqueOrganizations || [])
+
+watch(state.uploading, () => {
+  nt.waitForTyping(updateOrganization)
+})
 
 const inspectionStandards = computed(() => {
   if (nt.admin.value) {
@@ -112,6 +122,7 @@ const uploadLogo = () => {
 
 const updateOrganization = async () => {
   emit('reload')
+  router.push({name: 'organization/overview' })
 }
 </script>
 

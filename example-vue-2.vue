@@ -55,6 +55,10 @@ export default class EditOrganizationForm extends NextTwinspect {
     this.$emit('input', open)
   }
 
+  created() {
+    this.isLoading = true
+  }
+
   get directUploadsPath(): string {
     return Api.directUploadsPath
   }
@@ -65,6 +69,11 @@ export default class EditOrganizationForm extends NextTwinspect {
 
   get organizations() {
     return this.currentUser.uniqueOrganizations
+  }
+
+  @Watch('uploading')
+  onUploadingChanged() {
+    this.waitForTyping(this.updateOrganization)
   }
 
   get inspectionStandards() {
@@ -112,6 +121,7 @@ export default class EditOrganizationForm extends NextTwinspect {
 
   async updateOrganization() {
     this.$emit('reload')
+    this.$router.push({ name: 'organization/overview' })
   }
 }
 </script>
