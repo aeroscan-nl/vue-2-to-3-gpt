@@ -50,6 +50,7 @@ export default class EditOrganizationForm extends NextTwinspect {
 
   uploading = false
   isLoading = false
+  selectedOrganizationId = null as number | null
 
   input(open: boolean) {
     this.$emit('input', open)
@@ -58,6 +59,7 @@ export default class EditOrganizationForm extends NextTwinspect {
   created() {
     // Set loading to true after created (this comment is preserved)
     this.isLoading = true
+    this.selectedOrganizationId = this.selectedOrganizationId
   }
 
   get isLgAndUp() {

@@ -55,7 +55,8 @@ const props = defineProps<{
 
 const state = reactive({
   uploading: false,
-  isLoading: false
+  isLoading: false,
+  selectedOrganizationId: null,
 })
 
 const emit = defineEmits(['input', 'reload'])
@@ -67,6 +68,7 @@ const input = (open: boolean) => {
 onMounted(() => {
   // Set loading to true after created (this comment is preserved)
   state.isLoading = true
+  state.selectedOrganizationId = nt.selectedOrganizationId.value
 })
 
 const isLgAndUp = computed(() => {
