@@ -15,7 +15,7 @@ require "openai"
 
 CLIENT = OpenAI::Client.new(access_token: OPENAI_KEY)
 
-MODEL = "gpt-4"
+MODEL = "gpt-4-1106-preview"
 
 SYSTEM = <<~SYSTEM_PROMPT
   You are an experienced Vue.js programmer who is migrating Vue component files from Vue 2 to Vue 3 one at a time.
@@ -84,6 +84,7 @@ SYSTEM = <<~SYSTEM_PROMPT
     @Prop() declare scenario: Scenario
     @Prop({ default: false }) declare onlyEditor: boolean
     @Prop({ default: false }) declare isComponentGroupView: boolean
+    @Prop() declare photos: Set<String>
   ```
 
   Vue 3 output:
@@ -97,6 +98,31 @@ SYSTEM = <<~SYSTEM_PROMPT
   }>(), {
     onlyEditor: false,
     isComponentGroupView: false,
+    photos: () => new Set<String>()
+  })
+  ```
+
+  If you're writing a watcher for a value that's inside a reactive object, often with the name `state`
+  make sure you use an anonymous function to access that value in the watcher like so:
+
+  Vue 2 input:
+
+  ```
+  @Watch('inviteType')
+  async invitationTypeChanged(type: string) {
+    if (type === "unit") {
+      await this.fetchUnits()
+    }
+  }
+  ```
+
+  Vue 3 output:
+
+  ```
+  watch(() => state.inviteType, async (type) => {
+    if (type === "unit") {
+      await fetchUnits()
+    }
   })
   ```
 
@@ -112,6 +138,8 @@ SYSTEM = <<~SYSTEM_PROMPT
   ```
   #{File.read("#{__dir__}/example-vue-3.vue")}
   ```
+
+
 SYSTEM_PROMPT
 
 def prompt(text, history=[])
@@ -129,7 +157,9 @@ def prompt(text, history=[])
       temperature: 0.0
     })
   # puts "Got response: #{result.inspect}"
-  result.dig("choices", 0, "message", "content")
+  content = result.dig("choices", 0, "message", "content")
+  raise "No content: #{result.inspect}" if content.nil?
+  content
 rescue => e
   $stderr.puts "Error: #{e.message}\n#{result.inspect}\n\n#{e.backtrace.join("\n")}"
   exit 1
@@ -140,9 +170,9 @@ original = File.read(path)
 
 # extract the <style>, <template> and <script> elements from the original vue file
 
-original_style = original.match(/^<style.*?>(.*?)^<\/style>/m)&.[](1)
-original_template = original.match(/^<template.*?>(.*?)^<\/template>/m)[1]
-original_script = original.match(/^<script.*?>(.*?)^<\/script>/m)[1]
+original_style = original.match(/^(<style.*?>(.*?)^<\/style>)/m)&.[](1)
+original_template = original.match(/^(<template.*?>(.*?)^<\/template>)/m)[1]
+original_script = original.match(/^(<script.*?>(.*?)^<\/script>)/m)[1]
 
 # first we prompt just the script
 result_script = prompt(original_script)
