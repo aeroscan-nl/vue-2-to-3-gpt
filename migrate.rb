@@ -16,6 +16,7 @@ require "openai"
 CLIENT = OpenAI::Client.new(access_token: OPENAI_KEY)
 
 MODEL = "gpt-4-1106-preview"
+# MODEL = "gpt-3.5-turbo-16k"
 
 def prompt(text, history=[], system: "I am a helpful assistant.")
   puts "Prompting.."
@@ -55,7 +56,7 @@ contents = File.read(path)
 # result = migrate_to_vue3(contents)
 
 require "#{__dir__}/i18n.rb"
-result = apply_i18n(contents)
+result = apply_i18n(path, contents)
 
 if REPLACE
   File.write(path, result)
