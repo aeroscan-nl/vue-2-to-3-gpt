@@ -15,8 +15,8 @@ require "openai"
 
 CLIENT = OpenAI::Client.new(access_token: OPENAI_KEY)
 
-MODEL = "gpt-4-1106-preview"
-# MODEL = "gpt-3.5-turbo-16k"
+# MODEL = "gpt-4-1106-preview"
+MODEL = "gpt-3.5-turbo-16k"
 
 def prompt(text, history=[], system: "I am a helpful assistant.")
   puts "Prompting.."
@@ -30,10 +30,13 @@ def prompt(text, history=[], system: "I am a helpful assistant.")
     parameters: {
       model: MODEL,
       messages:,
-      temperature: 0.0
+      temperature: 0.0,
+      stream: proc do |chunk, _bytesize|
+        print chunk.dig("choices", 0, "delta", "content")
+      end
     })
   # puts "Got response: #{result.inspect}"
-  content = result.dig("choices", 0, "message", "content")
+  content = result #.dig("choices", 0, "message", "content")
   raise "No content: #{result.inspect}" if content.nil?
   content
 rescue => e
