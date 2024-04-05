@@ -135,7 +135,7 @@ def migrate_to_vue3(original)
     { role: "assistant", content: result_script }
   ]
 
-  result_template = prompt("Thank you for migrating the script, please also migrate the accompanying template: \n\n#{original_template}", history)
+  result_template = prompt("Thank you for migrating the script, please also migrate the accompanying template: \n\n#{original_template}", history, system: VUE_3_SYSTEM_PROMPT)
 
   puts "Result template:\n\n#{result_template}"
 
