@@ -15,7 +15,8 @@ require "openai"
 
 CLIENT = OpenAI::Client.new(access_token: OPENAI_KEY)
 
-MODEL = "gpt-4"
+# MODEL = "gpt-4"
+MODEL = "gpt-4o"
 # MODEL = "gpt-3.5-turbo-16k"
 
 def prompt(text, history=[], system: "I am a helpful assistant.")
